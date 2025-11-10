@@ -250,7 +250,7 @@
                         </div>
                         <div>
                             <h3>Request a Quote</h3>
-                            <form action="https://formspree.io/f/xwprbled" method="POST"  class="modern-form">
+                            <form action="https://formspree.io/f/xvgdogpj" method="POST"  class="modern-form">
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="name">Full Name</label>
@@ -313,34 +313,56 @@
     </div>
 
     <script>
-        // Form submission handler
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const name = formData.get('name');
-            const repairType = formData.get('repair-type');
-            
-            if (name) {
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-success';
-                alert.style.cssText = 'background: linear-gradient(135deg, #d1fae5, #a7f3d0); border: 2px solid #6ee7b7; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;';
-                alert.innerHTML = `
-                    <div style="font-size: 2rem;">✓</div>
-                    <div>
-                        <strong style="color: #065f46; display: block; margin-bottom: 0.25rem;">Thank you ${name}!</strong>
-                        <span style="color: #047857;">Your ${repairType ? repairType : 'drywall'} repair quote request has been received. We'll contact you within 24 hours!</span>
-                    </div>
-                `;
-                
-                this.parentNode.insertBefore(alert, this);
-                this.reset();
-                
-                setTimeout(() => {
-                    alert.remove();
-                }, 5000);
+        // Simple form submission handler
+document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const name = formData.get('name');
+    const service = formData.get('service');
+    
+    try {
+        // Submit to Formspree
+        const response = await fetch('https://formspree.io/f/xvgdogpj', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
             }
         });
+        
+        if (response.ok) {
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `
+                <div class="alert-icon">✓</div>
+                <div class="alert-content">
+                    <strong>Thank you ${name}!</strong> Your ${service ? service + ' quote request' : 'message'} has been received. We'll contact you within 24 hours!
+                </div>
+            `;
+            
+            this.parentNode.insertBefore(alert, this);
+            this.reset();
+            
+            setTimeout(() => alert.remove(), 5000);
+        } else {
+            throw new Error('Form submission failed');
+        }
+    } catch (error) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success';
+        alert.style.background = '#ef4444';
+        alert.innerHTML = `
+            <div class="alert-icon">✕</div>
+            <div class="alert-content">
+                <strong>Oops!</strong> There was an error. Please email us directly at Oanbtawi13@gmail.com
+            </div>
+        `;
+        this.parentNode.insertBefore(alert, this);
+        setTimeout(() => alert.remove(), 5000);
+    }
+});
 
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
